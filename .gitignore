@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+terraform.tfstate
+terraform.tfstate.*
+.terraform/
+.DS_Store
+zap-report.*
+trivy-report.*
+semgrep-report.*
