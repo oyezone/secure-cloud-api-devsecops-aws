@@ -54,12 +54,38 @@ Local development workstation
 - Diagnosed and fixed an ECS runtime image architecture mismatch
 
 ## Featured Evidence
+### AWS CLI Validation
+- [AWS CLI identity](./evidence/01-aws-cli-identity.png)
+- [ECR repository verify](./evidence/21-aws-cli-ecr-verify.png)
+- [ECR image verify](./evidence/26-aws-cli-ecr-image-verify.png)
+- [ECS cluster verify](./evidence/32-aws-cli-ecs-cluster-verify.png)
+- [CloudWatch log group verify](./evidence/33-aws-cli-log-group-verify.png)
+- [ECS service verify](./evidence/39-aws-cli-ecs-service-verify.png)
+- [ECS list tasks](./evidence/40-aws-cli-ecs-list-tasks.png)
+- [ECS task details](./evidence/41-aws-cli-ecs-task-details.png)
+- [ECS service events](./evidence/42-aws-cli-ecs-service-events.png)
+- [ECS status after redeploy](./evidence/48-aws-ecs-service-status-after-redeploy.png)
+- [ECS list tasks after redeploy](./evidence/49-aws-ecs-list-tasks-after-redeploy.png)
+- [ECS task details after redeploy](./evidence/50-aws-ecs-task-details-after-redeploy.png)
+- [EC2 ENI public IP](./evidence/51-aws-ec2-eni-public-ip.png)
+
+### AWS Console Validation
+- [ECS service healthy](./evidence/67-aws-ui-ecs-service-healthy.png)
+- [ECS task running](./evidence/68-aws-ui-ecs-task-running.png)
+- [ECR image](./evidence/69-aws-ui-ecr-image.png)
+- [CloudWatch log group](./evidence/70-aws-ui-cloudwatch-log-group.png)
+
+### Live API Validation
 - [Live AWS health endpoint success](./evidence/52-public-ip-health-success.png)
 - [Live AWS telemetry upload success](./evidence/53-public-ip-telemetry-success.png)
 - [Live AWS admin unauthorized](./evidence/54-public-ip-admin-unauthorized.png)
 - [Live AWS admin authorized](./evidence/55-public-ip-admin-authorized.png)
-- [ECS task details after redeploy](./evidence/50-aws-ecs-task-details-after-redeploy.png)
+
+### Security Pipeline
 - [CI/CD security workflow file](./evidence/60-github-actions-security-workflow-file.png)
+- [Local Trivy config scan](./evidence/61-local-trivy-config-scan0.png)
+- [Local Trivy findings](./evidence/61-local-trivy-config-scan1.png)
+- [Local Semgrep SAST scan](./evidence/62-local-semgrep-sast-scan.png)
 - [Full evidence index](./docs/evidence-index.md)
 
 ## Most Important Technical Win
