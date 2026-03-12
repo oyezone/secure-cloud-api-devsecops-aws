@@ -48,10 +48,19 @@ Local development workstation
 - Created an ECR repository and pushed container images
 - Deployed the application to ECS Fargate
 - Validated live public API behavior over AWS-assigned public IP
-- Confirmed unauthorized and authorized admin access behavior
+- Confirmed unauthorized and authorized access behavior
 - Integrated Semgrep and Trivy into a GitHub Actions security workflow
-- Detected realistic security findings in infrastructure code
+- Detected realistic infrastructure security findings
 - Diagnosed and fixed an ECS runtime image architecture mismatch
+
+## Featured Evidence
+- [Live AWS health endpoint success](./evidence/52-public-ip-health-success.png)
+- [Live AWS telemetry upload success](./evidence/53-public-ip-telemetry-success.png)
+- [Live AWS admin unauthorized](./evidence/54-public-ip-admin-unauthorized.png)
+- [Live AWS admin authorized](./evidence/55-public-ip-admin-authorized.png)
+- [ECS task details after redeploy](./evidence/50-aws-ecs-task-details-after-redeploy.png)
+- [CI/CD security workflow file](./evidence/60-github-actions-security-workflow-file.png)
+- [Full evidence index](./docs/evidence-index.md)
 
 ## Most Important Technical Win
 The initial ECS deployment failed because the image built on Apple Silicon did not match the runtime platform expected by ECS (`linux/amd64`). I identified the issue from ECS service events, rebuilt the image explicitly for amd64 using Docker Buildx, pushed the corrected image to ECR, forced a new ECS deployment, and confirmed the service reached steady state.
@@ -63,17 +72,11 @@ Examples of findings surfaced during the project:
 - Missing stronger observability hardening signals
 - Opportunities to improve cloud logging and runtime visibility
 
-These findings were treated as a practical remediation backlog rather than ignored as “lab noise.”
+These findings were treated as a practical remediation backlog rather than ignored as lab noise.
 
-## Evidence
-The `evidence/` folder contains screenshots and validation artifacts for:
-- local API execution
-- Docker build and container runtime
-- Terraform validation, plan, and apply steps
-- ECR push success
-- ECS deployment and task verification
-- public endpoint validation
-- Semgrep and Trivy security scans
+## Documentation
+- [Project overview](./docs/project-overview.md)
+- [Evidence index](./docs/evidence-index.md)
 
 ## Repository Layout
 - `app/` — FastAPI application code
