@@ -15,3 +15,15 @@ variable "environment" {
   type        = string
   default     = "dev"
 }
+
+variable "container_port" {
+  description = "Container port for the application"
+  type        = number
+  default     = 8000
+}
+
+variable "aws_account_id" {
+  description = "AWS account ID"
+  type        = string
+  default     = "902883117782"
+}
