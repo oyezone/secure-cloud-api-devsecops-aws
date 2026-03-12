@@ -91,3 +91,58 @@ resource "aws_ecs_task_definition" "app_task" {
 
   tags = local.common_tags
 }
+
+data "aws_vpc" "default" {
+  default = true
+}
+
+data "aws_subnets" "default" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
+}
+
+resource "aws_security_group" "ecs_service_sg" {
+  name        = "${var.project_name}-${var.environment}-ecs-sg"
+  description = "Security group for ECS service"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress {
+    description = "Allow HTTP traffic to container port"
+    from_port   = var.container_port
+    to_port     = var.container_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Allow all outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = local.common_tags
+}
+
+resource "aws_ecs_service" "app_service" {
+  name            = "${var.project_name}-${var.environment}-service"
+  cluster         = aws_ecs_cluster.app_cluster.id
+  task_definition = aws_ecs_task_definition.app_task.arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    subnets          = data.aws_subnets.default.ids
+    security_groups  = [aws_security_group.ecs_service_sg.id]
+    assign_public_ip = true
+  }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.ecs_task_execution_role_policy
+  ]
+
+  tags = local.common_tags
+}
