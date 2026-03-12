@@ -102,6 +102,8 @@ These findings were treated as a practical remediation backlog rather than ignor
 
 ## Documentation
 - [Project overview](./docs/project-overview.md)
+- [Threat model](./docs/threat-model.md)
+- [Security review notes](./docs/security-review-notes.md)
 - [Evidence index](./docs/evidence-index.md)
 
 ## Repository Layout
