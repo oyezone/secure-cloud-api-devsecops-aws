@@ -3,6 +3,17 @@
 ## Objective
 Assess the security risks of a connected-vehicle-style telemetry API deployed in AWS and identify practical mitigations aligned with AppSec and DevSecOps workflows.
 
+## Methodology
+This threat model uses the **STRIDE** framework:
+- **S**poofing
+- **T**ampering
+- **R**epudiation
+- **I**nformation Disclosure
+- **D**enial of Service
+- **E**levation of Privilege
+
+The goal is to evaluate how each STRIDE category could affect a vehicle-adjacent telemetry API and its supporting AWS deployment.
+
 ## System Overview
 This project simulates a vehicle-adjacent cloud API that accepts telemetry-like data, exposes operational endpoints, and runs publicly on AWS ECS Fargate.
 
@@ -53,49 +64,43 @@ This project simulates a vehicle-adjacent cloud API that accepts telemetry-like 
 6. ECS pulls image from ECR and runs task
 7. Logs are sent to CloudWatch
 
-## Threat Scenarios
+## STRIDE Analysis
 
-### 1. Unauthorized access to admin diagnostics
-- Risk: attacker attempts to call `/admin/diagnostics` without valid authorization
-- Impact: sensitive diagnostic exposure
-- Current control: bearer token check
-- Improvement: replace static token approach with stronger auth model and secret management
+### Spoofing
+**Threat:** attacker pretends to be an authorized admin user or trusted telemetry source.  
+**Example:** calling `/admin/diagnostics` with guessed or reused credentials.  
+**Current control:** bearer token check on admin route.  
+**Improvement:** replace static token with stronger auth pattern, better secret handling, and identity validation for privileged access.
 
-### 2. Abuse of public telemetry upload endpoint
-- Risk: attacker sends malformed, excessive, or automated requests
-- Impact: availability degradation, noisy telemetry, possible abuse path
-- Current control: structured API implementation
-- Improvement: add request validation hardening, rate limiting, WAF, and monitoring thresholds
+### Tampering
+**Threat:** attacker modifies requests, payloads, or deployment artifacts.  
+**Example:** altered telemetry payloads or replacement of image content under a mutable `latest` tag.  
+**Current control:** structured API implementation and ECR image scanning.  
+**Improvement:** enforce immutable ECR tags, versioned image tags, stronger request validation, and integrity checks in pipeline.
 
-### 3. Mutable container image tag risk
-- Risk: `latest` tag can be replaced with different image content
-- Impact: integrity loss in deployment pipeline
-- Current control: ECR image scanning enabled
-- Improvement: make tags immutable and use versioned deployment tags
+### Repudiation
+**Threat:** a caller performs actions and later denies having done so.  
+**Example:** abusive use of telemetry or diagnostics endpoints without strong request attribution.  
+**Current control:** CloudWatch log group is present for runtime logging.  
+**Improvement:** stronger audit logging, request correlation, actor attribution, and alertable event tracking.
 
-### 4. Broad security group egress
-- Risk: compromised workload can communicate broadly outbound
-- Impact: expanded attacker freedom and data exfiltration risk
-- Current control: basic networking for lab simplicity
-- Improvement: restrict outbound destinations to explicit required paths
+### Information Disclosure
+**Threat:** sensitive information is exposed to unauthorized parties.  
+**Example:** unauthorized access to diagnostics data or overexposed operational details.  
+**Current control:** protected admin route and separation between public and privileged paths.  
+**Improvement:** strengthen auth model, minimize sensitive output, and review logs and responses for unnecessary detail.
 
-### 5. Limited runtime observability
-- Risk: inadequate visibility into suspicious behavior or deployment anomalies
-- Impact: slower detection and response
-- Current control: CloudWatch log group present
-- Improvement: enable stronger monitoring, alarms, container insights, and detection use cases
+### Denial of Service
+**Threat:** attacker degrades or exhausts service availability.  
+**Example:** flooding the public `/telemetry/upload` endpoint with excessive requests or malformed payloads.  
+**Current control:** basic service deployment and runtime validation.  
+**Improvement:** rate limiting, WAF, monitoring thresholds, autoscaling considerations, and request-size validation.
 
-### 6. Build/runtime architecture mismatch
-- Risk: image built for wrong platform fails in runtime
-- Impact: deployment failure and service outage
-- Current control: corrected with explicit amd64 build
-- Improvement: enforce platform-specific build step in CI/CD
-
-### 7. Infrastructure misconfiguration drift
-- Risk: insecure or inconsistent cloud settings over time
-- Impact: exposure through configuration weakness
-- Current control: Terraform-managed infrastructure
-- Improvement: fail pipeline on critical IaC scan findings and track remediations
+### Elevation of Privilege
+**Threat:** attacker gains more access than intended.  
+**Example:** moving from public route access to diagnostics/admin-level access or abusing broad outbound permissions.  
+**Current control:** separate protected endpoint and Terraform-managed IAM/runtime configuration.  
+**Improvement:** stronger least privilege, tighter egress rules, better auth separation, and security review of administrative paths.
 
 ## Highest-Priority Risks
 1. Mutable ECR image tags
@@ -124,4 +129,4 @@ This project simulates a vehicle-adjacent cloud API that accepts telemetry-like 
 - expand logging and monitoring coverage
 
 ## Interview Summary
-This threat model shows how I think about assets, trust boundaries, abuse cases, cloud deployment risk, and practical mitigations in a vehicle-adjacent API environment. It also demonstrates that I treat security as a lifecycle activity spanning design, deployment, runtime validation, and remediation.
+This threat model uses STRIDE to evaluate risks across API design, runtime deployment, image integrity, access control, and observability. It shows how security concerns can be translated into practical engineering mitigations in a vehicle-adjacent cloud environment.
